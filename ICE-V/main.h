@@ -14,6 +14,8 @@
 #include "esp_system.h"
 #include "esp_log.h"
 
+#define PORT                        3333
+
 extern const char *fwVersionStr;
 extern const char *cfg_file;
 

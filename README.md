@@ -5,7 +5,7 @@ Arduino-based ESP32 firmware for the ICE-V Wireless board
 This project is a version of the ICE-V Wireless firmware ported to the Ardunio
 ESP32 environment. It includes the well-known WiFiManager SoftAP captive portal
 to do the initial SSID/Password setup as well as an option to restart the setup
-at any time by pressing the BOOT button for three secones. It supports power-on
+at any time by pressing the BOOT button for three seconds. It supports power-on
 initialization of the ICE40UP5k FPGA from a stored default as well as wireless
 programming of the FPGA, SPI access after configuration, PSRAM read/write and
 battery voltage monitoring.
@@ -59,17 +59,31 @@ the "Configure WiFi" button and a list of available networks will appear.
 Select your network and provide the password. The captive portal will shut down
 and the ICE-V board will join your network.
 
-Note: after the SoftAP/Captive Portal shuts down your ICE-V board will
-have a name of "esp32c3-XXXXXX.local". On subsequent boots with good network
-credentials it will be named "ice-v_XXXXXX.local" so once your board is able
-to access your network you may want to touch reset to restart with a more
-normal network name.
-
 ### Resetting Credentials
 If you want to clear out the network credentials for any reason you can do so
 by pressing the BOOT button on the ICE-V board for approximately 3 seconds. This
 will wipe the existing network SSID and password and force a restart into the
 SoftAP/Captive Portal to re-enter new credentials.
+
+## Network Addressing
+The WiFi networking stack in this firmware uses DHCP to request an IP address
+on your router and mDNS to advertise its name. Each ICE-V board will have
+a unique mDNS name of `ice-v_XXXXXX.local` after it successfully connects to
+your network, where `XXXXXX` is the hexadecimal value of the last three octets
+(bytes) in the MAC address assigned to the ESP32C3 chip by the factory. You
+can determine this name by reading it from the Serial Monitor window of the
+Arduino IDE during boot-up.
+
+In addition to the hostname, the firmware also advertises a TCP service `_FPGA`
+on port 3333. You can use an mDNS browser such as `avahi-browse` on Linux to
+find the hostname (without the `.local` suffix) without needing to see the
+serial log output.
+
+Note: after the SoftAP/Captive Portal shuts down your ICE-V board will
+have a name of `esp32c3-XXXXXX.local`. On subsequent boots with good network
+credentials it will be named `ice-v_XXXXXX.local` so once your board is able
+to access your network you may want to touch reset to restart with a more
+normal network name.
 
 ## Default FPGA configuration
 After installing the firmware for the first time, the SPIFFS filesystem will be

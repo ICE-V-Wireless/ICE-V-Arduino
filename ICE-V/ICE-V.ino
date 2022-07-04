@@ -1,5 +1,6 @@
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 #include <ESPmDNS.h>
+#include "main.h"
 #include "ice.h"
 #include "spiffs.h"
 #include "adc_c3.h"
@@ -114,7 +115,12 @@ void setup()
     Serial.println(String("mDNS responder started. Name = " + String(WiFi.getHostname()) + ".local"));
 
 #if 1
+    // Start the TCP socket server for the FPGA command handler
     socket_init();
+    
+    // Add service to mDNS
+    MDNS.addService("_FPGA", "tcp", PORT);
+    Serial.println("mDNS _FPGA service added");
 #else
     Serial.println("Skipped TCP Server startup");
 #endif    

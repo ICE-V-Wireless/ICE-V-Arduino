@@ -22,7 +22,6 @@
 
 static const char *TAG = "socket";
 
-#define PORT                        3333
 #define KEEPALIVE_IDLE              5
 #define KEEPALIVE_INTERVAL          5
 #define KEEPALIVE_COUNT             3
