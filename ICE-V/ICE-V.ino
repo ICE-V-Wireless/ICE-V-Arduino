@@ -29,7 +29,7 @@ uint8_t boot_state;
 void setup()
 {
   // delay is needed to allow USB CDC to set up (???)
-  delay(200);
+  delay(1000);
   
   // startup
   log_i("-----------------------------");
@@ -70,9 +70,6 @@ void setup()
     log_w("ADC Init Failed");
 
   WiFi.mode(WIFI_STA); // explicitly set mode, esp defaults to STA+AP
-
-  // Try to eliminate all Serial stuff and use logx()
-  Serial.begin(115200);
   
   // custom hostname derived from MAC address
   String mac = WiFi.macAddress();
@@ -91,7 +88,7 @@ void setup()
   // password protected ap
   if(!wm.autoConnect("ICE-V_AP","ice-vpwd"))
   {
-      Serial.println("Failed to connect");
+      log_e("Failed to connect");
       // ESP.restart();
   } 
   else
@@ -106,13 +103,13 @@ void setup()
     //   we send our IP address on the WiFi network
     if(!MDNS.begin(WiFi.getHostname()))
     {
-        Serial.println("Error setting up MDNS responder!");
+        log_e("Error setting up MDNS responder!");
         while(1)
         {
             delay(1000);
         }
     }
-    Serial.println(String("mDNS responder started. Name = " + String(WiFi.getHostname()) + ".local"));
+    log_i("mDNS responder started. Name = %s.local", WiFi.getHostname());
 
 #if 1
     // Start the TCP socket server for the FPGA command handler
@@ -120,9 +117,9 @@ void setup()
     
     // Add service to mDNS
     MDNS.addService("_FPGA", "tcp", PORT);
-    Serial.println("mDNS _FPGA service added");
+    log_i("mDNS _FPGA service added");
 #else
-    Serial.println("Skipped TCP Server startup");
+    log_i("Skipped TCP Server startup");
 #endif    
   }
       
@@ -152,7 +149,7 @@ void loop()
   // Check for long press on BOOT button
   if((curr_boot_state == LOW) && (boot_milli + 3000 < millis()))
   {
-    Serial.println("Long press on BOOT - Resetting WiFi credentials.");
+    log_i("Long press on BOOT - Resetting WiFi credentials.");
     boot_milli = millis();
     
     // reset settings - wipe stored credentials
